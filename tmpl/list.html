@@ -1,0 +1,27 @@
+
+{{define "list"}}
+{{template "header" .}}
+<div class="content">
+
+<h2>Items</h2>
+
+<p>[<a href="/add">Add</a>]</p>
+
+<div class="list-group">
+{{range .items}}
+  <a href="{{.Link}}" class="list-group-item">
+<span class="badge">{{.Tag}}</span>
+    <h4 class="list-group-item-heading">{{.Name}}</h4>
+    <p class="list-group-item-text">
+	{{.Link}}<br/>{{.Descr}}
+	</p>
+  </a>
+{{end}}
+</div>
+
+{{template "footer" .}}
+{{end}}
+
+
+
+

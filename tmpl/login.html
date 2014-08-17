@@ -1,0 +1,54 @@
+{{define "login"}}
+{{template "header" .}}
+<div class="container">
+			<form id="login-frorm" class="form-horizontal" method="POST" action="/login">
+				<fieldset>
+					<legend>Login</legend>
+					{{if .Error}}
+						<div class="errorblock">
+							Your login attempt was not successful, try again.<br /> 
+						</div>
+					{{end}}
+					</c:if>
+					<div class="control-group">
+						<label class="control-label">User Name</label>
+						<div class="controls">
+							<div class="input-prepend">
+								<span class="add-on"><i class="icon-user"></i></span> <input
+									type="text" class="input-xlarge" id="userName"
+									name="userName" placeholder="User Name">
+							</div>
+						</div>
+					</div>
+
+					<div class="control-group">
+						<label class="control-label">Password</label>
+						<div class="controls">
+							<div class="input-prepend">
+								<span class="add-on"><i class="icon-lock"></i></span> <input
+									type="Password" id="password" class="input-xlarge"
+									name="password" placeholder="Password">
+							</div>
+							<a href="forgetten.html">Forgot password?</a>
+						</div>
+					</div>
+
+					<div class="control-group">
+						<label class="control-label"></label>
+						<div class="controls">
+							<button type="submit" class="btn btn-success">Login</button>
+							<a href="report-problem.html">Report a problem</a>
+
+						</div>
+
+					</div>
+				</fieldset>
+				<div>
+					Don't have an account? <a href="/register">Create Account »</a>
+				</div>
+
+			</form>
+
+	</div>
+	{{template "footer" .}}
+{{end}}

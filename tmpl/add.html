@@ -1,0 +1,15 @@
+{{define "add"}}
+{{template "header" .}}
+<div class="content">
+	<h2>New Item</h2>
+	
+<form action="/add" method="POST">
+	<div><p>Name</p> <input name="name" ></div>
+	<div><p>Tag</p> <input name="tag" ></div>
+	<div><p>URL</p>  <input name="url" ></div>
+	<div><p>Descr</p>  <textarea name="descr" rows="5" cols="20"></textarea></div>
+	<div><input type="submit" value="Save"></div>
+</form>
+</div>
+{{template "footer" .}}
+{{end}}
