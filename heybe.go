@@ -5,8 +5,6 @@ import (
 	"html/template"
 	"net/http"
 
-	//	"./mustache"
-
 	"github.com/gorilla/mux"
 )
 
