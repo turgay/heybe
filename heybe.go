@@ -23,6 +23,10 @@ type User struct {
 	Email    string
 }
 
+func (user *User) Match(userName string, passwd string) bool {
+	return user.UserName == userName && user.Password == passwd
+}
+
 var repository = Repository{}
 
 func renderTemplate(w http.ResponseWriter, tmpl string, params interface{}) {
@@ -36,6 +40,7 @@ func renderTemplate(w http.ResponseWriter, tmpl string, params interface{}) {
 
 func listHandler(response http.ResponseWriter, request *http.Request) {
 	userName := getUserName(request)
+	fmt.Println("Logged user = ", userName)
 	if userName != "" {
 		items, err := repository.LoadItems()
 		fmt.Println(items, err)
@@ -60,13 +65,14 @@ func registerHandler(response http.ResponseWriter, request *http.Request) {
 	if request.Method == "GET" {
 		renderTemplate(response, "register", nil)
 	} else {
-		userName := request.FormValue("name")
+		userName := request.FormValue("userName")
 		email := request.FormValue("email")
-		password := request.FormValue("password")
+		password := request.FormValue("passwd")
 
 		//TODO decode password
 		newUser := User{UserName: userName, Email: email, Password: password}
 		repository.AddUser(newUser)
+		setSession(userName, response)
 
 		http.Redirect(response, request, "/list", http.StatusFound)
 	}
@@ -99,9 +105,13 @@ func loginHandler(response http.ResponseWriter, request *http.Request) {
 	fmt.Println("N=", name, " P=", pass)
 	fmt.Printf("%+v\n", request)
 	if name != "" && pass != "" {
-		// .. check credentials ..
-		setSession(name, response)
-		redirectTarget = "list"
+		err := authUser(name, pass)
+		if err == nil {
+			setSession(name, response)
+			redirectTarget = "list"
+		} else {
+			//TODO show error message!!!!
+		}
 	}
 	http.Redirect(response, request, redirectTarget, 302)
 }
@@ -122,7 +132,7 @@ func indexPageHandler(response http.ResponseWriter, request *http.Request) {
 var router = mux.NewRouter()
 
 func main() {
-	repository.InitReadItems()
+	repository.Init()
 
 	router.HandleFunc("/", indexPageHandler)
 	router.HandleFunc("/list", listHandler)

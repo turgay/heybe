@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"github.com/gorilla/securecookie"
 	"net/http"
 )
@@ -47,4 +48,20 @@ func clearSession(response http.ResponseWriter) {
 		MaxAge: -1,
 	}
 	http.SetCookie(response, cookie)
+}
+
+func authUser(userName string, passwd string) error {
+	registeredUser := repository.FindUser(userName)
+
+	if registeredUser == nil {
+		return errors.New("Invalid credentials")
+	}
+
+	match := registeredUser.Match(userName, passwd)
+
+	if match {
+		return nil
+	}
+	return errors.New("Invalid credentials")
+
 }

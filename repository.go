@@ -7,7 +7,7 @@ type Repository struct {
 	users     []User
 }
 
-func (repo *Repository) InitReadItems() {
+func (repo *Repository) Init() {
 	item1 := ReadItem{
 		Name:  "Effective Go",
 		Link:  "http://golang.org/doc/effective_go.html",
@@ -20,6 +20,12 @@ func (repo *Repository) InitReadItems() {
 		Descr: "Go best practices",
 		Tag:   "Go"}
 	repo.readItems = []ReadItem{item1, item2}
+
+	user1 := User{
+		UserName: "turgay",
+		Password: "heybe",
+		Email:    "tk@heybe.com"}
+	repo.users = []User{user1}
 }
 
 func (repo Repository) LoadItems() ([]ReadItem, error) {
@@ -32,4 +38,13 @@ func (repo *Repository) AddUser(user User) {
 
 func (repo *Repository) AddItem(item ReadItem) {
 	repo.readItems = append(repo.readItems, item)
+}
+
+func (repo *Repository) FindUser(userName string) *User {
+	for _, user := range repo.users {
+		if user.UserName == userName {
+			return &user
+		}
+	}
+	return nil
 }
