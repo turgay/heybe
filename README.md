@@ -13,4 +13,4 @@ It is being implemented in Go.
 TODO
 - Add database support
 - Encode pwd
-- Forgot pawd support
+- Forgotten pwd support
