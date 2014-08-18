@@ -14,3 +14,6 @@ TODO
 - Add database support
 - Encode pwd
 - Forgotten pwd support
+- Remember user
+
+
