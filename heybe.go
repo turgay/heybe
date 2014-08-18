@@ -111,6 +111,11 @@ func loginHandler(response http.ResponseWriter, request *http.Request) {
 			redirectTarget = "list"
 		} else {
 			//TODO show error message!!!!
+			if err != nil {
+				http.Error(response, err.Error(), http.StatusInternalServerError)
+				return
+
+			}
 		}
 	}
 	http.Redirect(response, request, redirectTarget, 302)
