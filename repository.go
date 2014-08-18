@@ -1,10 +1,19 @@
 package main
 
-//TODO create type for users slice
+type UserList []User
+
+func (list UserList) FindBy(userName string) *User {
+	for _, user := range list {
+		if user.UserName == userName {
+			return &user
+		}
+	}
+	return nil
+}
 
 type Repository struct {
 	readItems []ReadItem
-	users     []User
+	userList  UserList
 }
 
 func (repo *Repository) Init() {
@@ -25,7 +34,7 @@ func (repo *Repository) Init() {
 		UserName: "turgay",
 		Password: "heybe",
 		Email:    "tk@heybe.com"}
-	repo.users = []User{user1}
+	repo.userList = []User{user1}
 }
 
 func (repo Repository) LoadItems() ([]ReadItem, error) {
@@ -33,7 +42,7 @@ func (repo Repository) LoadItems() ([]ReadItem, error) {
 }
 
 func (repo *Repository) AddUser(user User) {
-	repo.users = append(repo.users, user)
+	repo.userList = append(repo.userList, user)
 }
 
 func (repo *Repository) AddItem(item ReadItem) {
@@ -41,10 +50,5 @@ func (repo *Repository) AddItem(item ReadItem) {
 }
 
 func (repo *Repository) FindUser(userName string) *User {
-	for _, user := range repo.users {
-		if user.UserName == userName {
-			return &user
-		}
-	}
-	return nil
+	return repo.userList.FindBy(userName)
 }
