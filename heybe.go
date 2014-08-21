@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"html/template"
 	"net/http"
+	"regexp"
+	"strings"
 
 	"github.com/gorilla/mux"
 )
@@ -61,20 +63,54 @@ func aboutHandler(response http.ResponseWriter, request *http.Request) {
 
 }
 
+type Errors map[string]string
+
+func validateUser(userName string, email string) Errors {
+	errs := make(map[string]string)
+
+	re := regexp.MustCompile(".+@.+\\..+")
+	matched := re.Match([]byte(email))
+	if matched == false {
+		errs["email"] = "Please enter a valid email address."
+	}
+
+	if strings.TrimSpace(userName) == "" {
+		errs["userName"] = "User Name cannot be empty."
+	}
+
+	return errs
+}
+
 func registerHandler(response http.ResponseWriter, request *http.Request) {
 	if request.Method == "GET" {
 		renderTemplate(response, "register", nil)
 	} else {
-		userName := request.FormValue("userName")
-		email := request.FormValue("email")
-		password := request.FormValue("passwd")
+		request.ParseForm()
+		form := request.Form
 
-		//TODO decode password
-		newUser := User{UserName: userName, Email: email, Password: password}
-		repository.AddUser(newUser)
-		setSession(userName, response)
+		userName := form.Get("userName")
+		email := form.Get("email")
+		password := form.Get("passwd")
 
-		http.Redirect(response, request, "/list", http.StatusFound)
+		errs := validateUser(userName, email)
+
+		if len(errs) > 0 {
+
+			form.Set("passwd", "")
+			form.Set("conpasswd", "")
+			params := map[string]interface{}{"userName": userName, "email": email, "Errors": errs}
+			renderTemplate(response, "register", params)
+		} else {
+
+			//fmt.Printf("%+v", form)
+
+			//TODO decode password
+			newUser := User{UserName: userName, Email: email, Password: password}
+			repository.AddUser(newUser)
+			setSession(userName, response)
+
+			http.Redirect(response, request, "/list", http.StatusFound)
+		}
 	}
 }
 
@@ -147,6 +183,9 @@ func main() {
 	router.HandleFunc("/logout", logoutHandler).Methods("POST")
 	router.HandleFunc("/about", aboutHandler)
 	router.HandleFunc("/register", registerHandler)
+
+	fileServer := http.StripPrefix("/static/", http.FileServer(http.Dir("static")))
+	http.Handle("/static/", fileServer)
 
 	http.Handle("/", router)
 	http.ListenAndServe(":8000", nil)

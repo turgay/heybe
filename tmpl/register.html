@@ -1,38 +1,59 @@
 {{define "register"}}
 {{template "header" .}}
 
+<style>
+.error {
+	color: #ff0000;
+}
+
+</style>
+
 	<div class="container">
 			<form id="register-form" class="form-horizontal" method="post">
+			
 			<fieldset>
 				<legend>Create Account</legend>
 				<div class="control-group">
+				
 					<label class="control-label">Email</label>
 					<div class="controls">
 						<div class="input-prepend">
 							<span class="add-on"><i class="icon-envelope"></i></span> <input
 								type="text" class="input-xlarge" id="email" name="email"
-								placeholder="Email">
+								placeholder="Email" value="{{.email}}">
+							{{ with .Errors.email }}
+						   	  <span class="error">{{ . }}</span>
+						    {{ end }}
 						</div>
 					</div>
 				</div>
 				<div class="control-group">
+				
 					<label class="control-label">User Name</label>
+					
 					<div class="controls">
 						<div class="input-prepend">
 							<span class="add-on"><i class="icon-user"></i></span> <input
 								type="text" class="input-xlarge" id="userName" name="userName"
-								placeholder="User Name">
+								placeholder="User Name" value="{{.userName}}">
+								{{ with .Errors.userName }}
+							   		<span class="error">{{ . }}</span>
+							    {{ end }}
 						</div>
 					</div>
 				</div>
 
 				<div class="control-group">
+			
 					<label class="control-label">Password</label>
 					<div class="controls">
 						<div class="input-prepend">
 							<span class="add-on"><i class="icon-lock"></i></span> <input
 								type="Password" id="passwd" class="input-xlarge" name="passwd"
 								placeholder="Password">
+								{{ with .Errors.password }}
+							   	 <span class="error">{{ . }}</span>
+							    {{ end }}
 						</div>
 					</div>
 				</div>
@@ -66,7 +87,7 @@
 
 	</div>
 
-	<script type="text/javascript" src="js/jquery.validate.js"></script>
+	<script type="text/javascript" src="/static/js/jquery.validate.js"></script>
 
 	<script type="text/javascript">
 		$(document).ready(function() {
