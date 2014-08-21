@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"html/template"
 	"net/http"
+	"net/url"
 	"regexp"
 	"strings"
 
@@ -29,6 +30,7 @@ func (user *User) Match(userName string, passwd string) bool {
 	return user.UserName == userName && user.Password == passwd
 }
 
+//TODO get rid of global vars
 var repository = Repository{}
 
 func renderTemplate(w http.ResponseWriter, tmpl string, params interface{}) {
@@ -63,22 +65,46 @@ func aboutHandler(response http.ResponseWriter, request *http.Request) {
 
 }
 
-type Errors map[string]string
+type Errors struct {
+	list []string
+}
 
-func validateUser(userName string, email string) Errors {
-	errs := make(map[string]string)
+func (e *Errors) Add(err string) {
+	e.list = append(e.list, err)
+}
+
+func (e Errors) IsEmpty() bool {
+	return len(e.list) == 0
+}
+
+func createAndValidateUser(form *url.Values) (*User, *Errors) {
+
+	userName := form.Get("userName")
+	email := form.Get("email")
+	password := form.Get("passwd")
+	conpasword := form.Get("conpasswd")
+
+	errs := new(Errors)
 
 	re := regexp.MustCompile(".+@.+\\..+")
 	matched := re.Match([]byte(email))
 	if matched == false {
-		errs["email"] = "Please enter a valid email address."
+		errs.Add("Please enter a valid email address.")
 	}
 
 	if strings.TrimSpace(userName) == "" {
-		errs["userName"] = "User Name cannot be empty."
+		errs.Add("User Name cannot be empty.")
 	}
 
-	return errs
+	if password != conpasword {
+		errs.Add("Passwords doesnt match.")
+	}
+	if errs.IsEmpty() {
+		newUser := &User{UserName: userName, Email: email, Password: password}
+		return newUser, nil
+	}
+
+	return nil, errs
 }
 
 func registerHandler(response http.ResponseWriter, request *http.Request) {
@@ -88,26 +114,14 @@ func registerHandler(response http.ResponseWriter, request *http.Request) {
 		request.ParseForm()
 		form := request.Form
 
-		userName := form.Get("userName")
-		email := form.Get("email")
-		password := form.Get("passwd")
+		user, errs := createAndValidateUser(&form)
 
-		errs := validateUser(userName, email)
-
-		if len(errs) > 0 {
-
-			form.Set("passwd", "")
-			form.Set("conpasswd", "")
-			params := map[string]interface{}{"userName": userName, "email": email, "Errors": errs}
+		if errs != nil {
+			params := map[string]interface{}{"Errors": errs}
 			renderTemplate(response, "register", params)
 		} else {
-
-			//fmt.Printf("%+v", form)
-
-			//TODO decode password
-			newUser := User{UserName: userName, Email: email, Password: password}
-			repository.AddUser(newUser)
-			setSession(userName, response)
+			repository.AddUser(user)
+			setSession(user.UserName, response)
 
 			http.Redirect(response, request, "/list", http.StatusFound)
 		}
@@ -165,7 +179,14 @@ func logoutHandler(response http.ResponseWriter, request *http.Request) {
 }
 
 func indexPageHandler(response http.ResponseWriter, request *http.Request) {
-	renderTemplate(response, "login", nil)
+	userName := getUserName(request)
+	if userName != "" {
+		params := map[string]interface{}{"authuser": userName}
+		renderTemplate(response, "index", params)
+	} else {
+		renderTemplate(response, "login", nil)
+	}
+
 }
 
 // server main method

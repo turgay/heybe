@@ -5,6 +5,11 @@
 		<title>{{.Title}}</title>
 		<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css">
 		<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-theme.min.css">
+
+		<script type="text/javascript" src="/static/js/jquery.min.js"></script>
+		<script type="text/javascript" src="/static/js/jquery.validate.js"></script>
+		<script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+	
 		<style type="text/css">
 			body {padding-bottom: 70px;}
 			.content {margin:10px;}
@@ -21,10 +26,12 @@
 				<li><a href="/register">Register</a></li>
 	        	<li><a href="/about">About</a></li>
 				<li class="dropdown pull-right">
-					<small>User: {{.authuser}}</small>
+				{{with .authuser}}
+					<small>User: {{.}}</small>
 					<form method="post" action="/logout">
 					    <button type="submit">Logout</button>
 					</form>
+					{{end}}
 				</li>
 	        </ul>
 	      </div>

@@ -9,10 +9,13 @@
 </style>
 
 	<div class="container">
-			<form id="register-form" class="form-horizontal" method="post">
+			<form id="register_form" class="form-horizontal" method="post">
 			
 			<fieldset>
 				<legend>Create Account</legend>
+				{{ with .Errors }}
+					<div class="error">{{ . }}</div>
+				{{ end }}
 				<div class="control-group">
 				
 					<label class="control-label">Email</label>
@@ -21,9 +24,6 @@
 							<span class="add-on"><i class="icon-envelope"></i></span> <input
 								type="text" class="input-xlarge" id="email" name="email"
 								placeholder="Email" value="{{.email}}">
-							{{ with .Errors.email }}
-						   	  <span class="error">{{ . }}</span>
-						    {{ end }}
 						</div>
 					</div>
 				</div>
@@ -36,9 +36,7 @@
 							<span class="add-on"><i class="icon-user"></i></span> <input
 								type="text" class="input-xlarge" id="userName" name="userName"
 								placeholder="User Name" value="{{.userName}}">
-								{{ with .Errors.userName }}
-							   		<span class="error">{{ . }}</span>
-							    {{ end }}
+								
 						</div>
 					</div>
 				</div>
@@ -51,9 +49,6 @@
 							<span class="add-on"><i class="icon-lock"></i></span> <input
 								type="Password" id="passwd" class="input-xlarge" name="passwd"
 								placeholder="Password">
-								{{ with .Errors.password }}
-							   	 <span class="error">{{ . }}</span>
-							    {{ end }}
 						</div>
 					</div>
 				</div>
@@ -87,12 +82,10 @@
 
 	</div>
 
-	<script type="text/javascript" src="/static/js/jquery.validate.js"></script>
-
 	<script type="text/javascript">
 		$(document).ready(function() {
 
-			$("#register-form").validate({
+			$("#register_form").validate({
 				rules : {
 					email : {
 						required : true,
@@ -106,10 +99,8 @@
 					conpasswd : {
 						required : true,
 						equalTo : "#passwd"
-					},
-					gender : "required"
+					}
 				},
-
 				errorClass : "help-inline"
 
 			});

@@ -41,8 +41,8 @@ func (repo Repository) LoadItems() ([]ReadItem, error) {
 	return repo.readItems, nil
 }
 
-func (repo *Repository) AddUser(user User) {
-	repo.userList = append(repo.userList, user)
+func (repo *Repository) AddUser(user *User) {
+	repo.userList = append(repo.userList, *user)
 }
 
 func (repo *Repository) AddItem(item ReadItem) {
