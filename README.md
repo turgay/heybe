@@ -16,4 +16,7 @@ TODO
 - Forgotten pwd support
 - Remember user
 
+-Synch with bookmarks
+
+
 

@@ -12,23 +12,29 @@ func (list UserList) FindBy(userName string) *User {
 }
 
 type Repository struct {
-	readItems []ReadItem
+	readItems []HeybeItem
 	userList  UserList
 }
 
 func (repo *Repository) Init() {
-	item1 := ReadItem{
+	item1 := HeybeItem{
 		Name:  "Effective Go",
 		Link:  "http://golang.org/doc/effective_go.html",
 		Descr: "GO lang details",
-		Tag:   "Go"}
+		Tags:  []string{"Go", "Books"}}
 
-	item2 := ReadItem{
+	item2 := HeybeItem{
 		Name:  "Go: Best Practices for Production Environments",
 		Link:  "http://peter.bourgon.org/go-in-production/",
 		Descr: "Go best practices",
-		Tag:   "Go"}
-	repo.readItems = []ReadItem{item1, item2}
+		Tags:  []string{"Go", "Best Practices"}}
+	item3 := HeybeItem{
+		Name:  "Java Memory Model Pragmatics",
+		Link:  "http://shipilev.net/blog/2014/jmm-pragmatics/",
+		Descr: "Java memory model",
+		Tags:  []string{"Java", "Performance"}}
+
+	repo.readItems = []HeybeItem{item1, item2, item3}
 
 	user1 := User{
 		UserName: "turgay",
@@ -37,7 +43,7 @@ func (repo *Repository) Init() {
 	repo.userList = []User{user1}
 }
 
-func (repo Repository) LoadItems() ([]ReadItem, error) {
+func (repo Repository) LoadItems() ([]HeybeItem, error) {
 	return repo.readItems, nil
 }
 
@@ -45,7 +51,7 @@ func (repo *Repository) AddUser(user *User) {
 	repo.userList = append(repo.userList, *user)
 }
 
-func (repo *Repository) AddItem(item ReadItem) {
+func (repo *Repository) AddItem(item HeybeItem) {
 	repo.readItems = append(repo.readItems, item)
 }
 

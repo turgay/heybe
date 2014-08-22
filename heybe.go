@@ -13,11 +13,11 @@ import (
 
 var templates = template.Must(template.ParseGlob("./tmpl/*.html"))
 
-type ReadItem struct {
+type HeybeItem struct {
 	Name  string
 	Link  string
 	Descr string
-	Tag   string
+	Tags  []string
 }
 
 type User struct {
@@ -135,8 +135,9 @@ func newItemHandler(response http.ResponseWriter, request *http.Request) {
 		name := request.FormValue("name")
 		link := request.FormValue("url")
 		descr := request.FormValue("descr")
-		tag := request.FormValue("tag")
-		ri := ReadItem{Name: name, Link: link, Descr: descr, Tag: tag}
+		tagStr := request.FormValue("tags")
+		tags := strings.Split(tagStr, ",")
+		ri := HeybeItem{Name: name, Link: link, Descr: descr, Tags: tags}
 
 		repository.AddItem(ri)
 

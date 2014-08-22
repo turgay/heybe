@@ -10,7 +10,9 @@
 <div class="list-group">
 {{range .items}}
   <a href="{{.Link}}" class="list-group-item">
-<span class="badge">{{.Tag}}</span>
+	{{range .Tags}}
+		<span class="badge">{{.}}</span>
+	{{end}}
     <h4 class="list-group-item-heading">{{.Name}}</h4>
     <p class="list-group-item-text">
 	{{.Link}}<br/>{{.Descr}}
