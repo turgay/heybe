@@ -54,7 +54,7 @@ func listHandler(response http.ResponseWriter, request *http.Request) {
 		}
 
 		//set impl?
-		var tags map[string]bool
+		tags := make(map[string]bool)
 
 		for _, item := range items {
 			for _, tag := range item.Tags {
