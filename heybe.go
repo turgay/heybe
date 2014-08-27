@@ -53,7 +53,21 @@ func listHandler(response http.ResponseWriter, request *http.Request) {
 			return
 		}
 
-		params := map[string]interface{}{"authuser": userName, "items": items}
+		//set impl?
+		var tags map[string]bool
+
+		for _, item := range items {
+			for _, tag := range item.Tags {
+				tags[tag] = true
+			}
+		}
+
+		tagList := []string{}
+		for tag, _ := range tags {
+			tagList = append(tagList, tag)
+		}
+
+		params := map[string]interface{}{"authuser": userName, "items": items, "tags": tagList}
 		renderTemplate(response, "list", params)
 	} else {
 		http.Redirect(response, request, "/", 302)

@@ -5,16 +5,12 @@
 	<div class="row clearfix">
 		<div class="col-md-2 column">
 			<ol class="list-inline">
+			{{range .tags}}
 				<li>
-					Go
-				</li>
-				<li>
-					Java
-				</li>
-				<li>
-					Performance
+					{{.}}
 				</li>
 				
+				{{end}}
 			</ol>
 		</div>
 		<div class="col-md-6 column">
