@@ -42,12 +42,20 @@ func renderTemplate(w http.ResponseWriter, tmpl string, params interface{}) {
 	}
 }
 
+func contains(slice []string, elem string) bool {
+	for _, a := range slice {
+		if a == elem {
+			return true
+		}
+	}
+	return false
+}
+
 func listHandler(response http.ResponseWriter, request *http.Request) {
 	userName := getUserName(request)
 	fmt.Println("Logged user = ", userName)
 	if userName != "" {
-		items, err := repository.LoadItems()
-		fmt.Println(items, err)
+		allItems, err := repository.LoadItems()
 		if err != nil {
 			http.Redirect(response, request, "/list", http.StatusFound)
 			return
@@ -56,7 +64,7 @@ func listHandler(response http.ResponseWriter, request *http.Request) {
 		//set impl?
 		tags := make(map[string]bool)
 
-		for _, item := range items {
+		for _, item := range allItems {
 			for _, tag := range item.Tags {
 				tags[tag] = true
 			}
@@ -65,6 +73,21 @@ func listHandler(response http.ResponseWriter, request *http.Request) {
 		tagList := []string{}
 		for tag, _ := range tags {
 			tagList = append(tagList, tag)
+		}
+
+		items := []HeybeItem{}
+		tagFilter := request.URL.Path[len("/list"):]
+		if tagFilter != "" {
+			tagFilter := tagFilter[1:]
+			fmt.Println(tagFilter)
+			for _, item := range allItems {
+				if contains(item.Tags, tagFilter) {
+					items = append(items, item)
+				}
+			}
+
+		} else {
+			items = allItems
 		}
 
 		params := map[string]interface{}{"authuser": userName, "items": items, "tags": tagList}
@@ -206,13 +229,14 @@ func indexPageHandler(response http.ResponseWriter, request *http.Request) {
 
 // server main method
 
-var router = mux.NewRouter()
-
 func main() {
 	repository.Init()
 
+	var router = mux.NewRouter()
+
 	router.HandleFunc("/", indexPageHandler)
-	router.HandleFunc("/list", listHandler)
+	router.HandleFunc("/list/", listHandler)
+	router.HandleFunc("/list/{tagFilter}", listHandler)
 	http.HandleFunc("/add", newItemHandler)
 
 	router.HandleFunc("/login", loginHandler).Methods("POST")
