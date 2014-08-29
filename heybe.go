@@ -235,6 +235,8 @@ func main() {
 	var router = mux.NewRouter()
 
 	router.HandleFunc("/", indexPageHandler)
+	//TODO fix list hangling
+	router.HandleFunc("/list", listHandler)
 	router.HandleFunc("/list/", listHandler)
 	router.HandleFunc("/list/{tagFilter}", listHandler)
 	http.HandleFunc("/add", newItemHandler)
